@@ -1,0 +1,1 @@
+nohup python3 pb_price_5000_process.py &

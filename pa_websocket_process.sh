@@ -1,0 +1,1 @@
+nohup python3 pa_websocket_process.py &
