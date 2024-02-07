@@ -41,68 +41,105 @@ def update_last_price():
     last_price_5 = pickle.load(file2)
     file2.close()
 
-    file3 = open(f"za_last_price_rsi.pkl", "rb")
-    last_price_rsi = pickle.load(file3)
+    file3 = open(f"za_last_price_sma.pkl", "rb")
+    last_price_sma = pickle.load(file3)
     file3.close()
+
+    # file3 = open(f"za_last_price_rsi.pkl", "rb")
+    # last_price_rsi = pickle.load(file3)
+    # file3.close()
 
     
     # # Обновляем значения в словаре
 
     for key in last_price_1.keys():
+        if key == 'RONINUSDT':
+            print(1)
+        #print(1)
         if key in last_price_5.keys():
+            #print(1)
             if isinstance(last_price_5[key], list):
-                last_price_5[key].append(float(last_price_1[key]))
+                #print(1)
+                last_price_5[key].append(last_price_1[key])
+                #print(len(last_price_5[key]))
 
-                btc = last_price_5[key] = last_price_5[key][-5000:]
+                last_price_5[key] = last_price_5[key][-6000:]
+
+                price_for_SMA = last_price_5[key]
+
+                #print(len(price_for_SMA))
+                if len(price_for_SMA) == 6000:
+
+                    SMA = sum(price_for_SMA)/len(price_for_SMA)
+
+                    if key == 'RONINUSDT':
+                        print(11)
+
+                    if key in last_price_sma.keys():
+                        #print(last_price_rsi[key]) 
+                        if isinstance(last_price_sma[key], list):
+                            #print(1)
+                            last_price_sma[key].append(SMA)
+                            last_price_sma[key] = last_price_sma[key][-6000:]
+                else:
+                    last_price_sma[key] = []
+
+
+
                 #if key == 'BTCUSDT':
                     #print(last_price_1[key])
+                #print(len(btc))
 
+                # # Модуль подсчета RSI ####################
+                #btc = last_price_5[key][-420:]
+                # if len(btc) > 15:
+                #     s = btc[0]
 
-                # Модуль подсчета RSI ####################
-                if len(btc) > 15:
-                    s = btc[0]
+                #     l = 0
+                #     sh = 0
 
-                    l = 0
-                    sh = 0
+                #     for i in btc:
+                #         d = i - s
+                #         if d > 0:
+                #             l += d  
+                #         elif d < 0:
+                #             sh += d
 
-                    for i in btc:
-                        d = i - s
-                        if d > 0:
-                            l += d  
-                        elif d < 0:
-                            sh += d
+                #         s = i 
 
-                        s = i 
+                #     AG = l/14
+                #     AL = abs(sh/14)
 
-                    AG = l/14
-                    AL = abs(sh/14)
+                #     if AL != 0:
+                #         RS = AG / AL
+                #     else:
+                #         RS = 1
 
-                    if AL != 0:
-                        RS = AG / AL
-                    else:
-                        RS = 1
+                #     RSI = 100 - (100/(1 + RS))
 
-                    RSI = 100 - (100/(1 + RS))
+                #     #last_price_rsi[key] = RSI
 
-                    last_price_rsi[key] = RSI
+                #     if key in last_price_rsi.keys():
+                #         #print(last_price_rsi[key])
+                #         if isinstance(last_price_rsi[key], list):
+                #             #print(1)
+                #             last_price_rsi[key].append(RSI)
+                #             last_price_rsi[key] = last_price_rsi[key][-20000:]
+                #         else:
+                #             last_price_rsi[key] = []
 
-                    # if key in last_price_rsi.keys():
-                    #     if isinstance(last_price_rsi[key], list):
-                    #         last_price_rsi[key].append(RSI)
-                    #         last_price_rsi[key] = last_price_rsi[key][-20000:]
-                    #     else:
-                    #         last_price_rsi[key] = []
-
-                    #Разблочить
-                    if RSI > 60:
-                        warlock.info(f'{key}, RSI = {str(RSI)}')
-                    elif RSI < 40:
-                        warlock.info(f'{key}, RSI = {str(RSI)}')
+                #     #Разблочить
+                #     # if RSI > 60:
+                #     #     warlock.info(f'{key}, RSI = {str(RSI)}')
+                #     # elif RSI < 40:
+                #     #     warlock.info(f'{key}, RSI = {str(RSI)}')
 
                 ############################################
                 
         else:
             last_price_5[key] = []
+            last_price_sma[key] = []
+
     #     last_price_5[key].append(float(last_price_1[key])) # Добавляем последнее значение в начало списка
     #     last_price_5[key] = last_price_5[key][-600:] # Ограничиваем список только пятью последними значениями
 
@@ -113,9 +150,15 @@ def update_last_price():
     pickle.dump(last_price_5, file2)
     file2.close()
 
-    file3 = open(f"za_last_price_rsi.pkl", "rb+")
-    pickle.dump(last_price_rsi, file3)
+    file3 = open(f"za_last_price_sma.pkl", "rb+")
+    pickle.dump(last_price_sma, file3)
     file3.close()
+
+    # file3 = open(f"za_last_price_rsi.pkl", "rb+")
+    # pickle.dump(last_price_rsi, file3)
+    # file3.close()
+
+
             
     # Сохраняем обновленный словарь по 5 тысячам монет в новый фай
 

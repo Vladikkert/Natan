@@ -1,6 +1,15 @@
 import websocket
 import pickle
 import json
+import datetime
+import pandas as pd
+
+asset = 'BTCUSDT'  # Символ актива
+duration = 60  # Длительность сохранения цен (в секундах)
+end_time = datetime.datetime.now() + datetime.timedelta(seconds=duration)
+
+# Создание пустого DataFrame для хранения цен
+prices = pd.DataFrame(columns=['time', 'price'])
 
 def on_message(ws, message):
     file = open(f"za_last_price.pkl", "rb+")
